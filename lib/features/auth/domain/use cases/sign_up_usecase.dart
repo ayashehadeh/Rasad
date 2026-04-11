@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../entities/user_entity.dart';
-import '../../data/repositories/user_repo_imp.dart';
+import '../repositories/auth_repo.dart'; 
+
 class SignUpUseCase {
   final AuthRepository _repository;
 
