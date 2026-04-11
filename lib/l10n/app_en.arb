@@ -1,0 +1,71 @@
+{
+  "@@locale": "en",
+  "appName": "Rasad",
+  "appTagline": "Jordan Eye",
+
+  "signIn": "Sign In",
+  "signUp": "Sign Up",
+  "signOut": "Sign Out",
+
+  "email": "Email",
+  "emailHint": "Enter your email",
+  "password": "Password",
+  "passwordHint": "Enter your password",
+  "confirmPassword": "Confirm Password",
+  "confirmPasswordHint": "Re-enter your password",
+  "fullName": "Full Name",
+  "fullNameHint": "Enter your full name",
+  "phoneNumber": "Phone Number",
+  "phoneNumberHint": "07XXXXXXXX",
+  "nationalNumber": "National Number",
+  "nationalNumberHint": "Enter your 10-digit national number",
+
+  "forgotPassword": "Forgot Password?",
+  "dontHaveAccount": "Don't have an account?",
+  "alreadyHaveAccount": "Already have an account?",
+  "createAccount": "Create Account",
+  "welcomeBack": "Welcome Back",
+  "welcomeBackSub": "Sign in to continue exploring Jordan",
+  "joinRasad": "Join Rasad",
+  "joinRasadSub": "Create your account to start your journey",
+
+  "orContinueWith": "Or continue with",
+  "continueWithGoogle": "Continue with Google",
+
+  "validationEmailRequired": "Email is required",
+  "validationEmailInvalid": "Please enter a valid email address",
+  "validationPasswordRequired": "Password is required",
+  "validationPasswordWeak": "Password must be at least 8 characters with uppercase and numbers",
+  "validationConfirmPasswordRequired": "Please confirm your password",
+  "validationPasswordMismatch": "Passwords do not match",
+  "validationFullNameRequired": "Full name is required",
+  "validationFullNameShort": "Name must be at least 3 characters",
+  "validationPhoneRequired": "Phone number is required",
+  "validationPhoneInvalid": "Please enter a valid Jordanian number (07XXXXXXXX)",
+  "validationNationalNumberRequired": "National number is required",
+  "validationNationalNumberInvalid": "National number must be 10 digits starting with 1 or 2",
+
+  "termsAgreement": "By creating an account, you agree to our ",
+  "termsOfService": "Terms of Service",
+  "and": " and ",
+  "privacyPolicy": "Privacy Policy",
+
+  "loading": "Loading...",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "next": "Next",
+  "back": "Back",
+  "done": "Done",
+
+  "errorGeneric": "Something went wrong. Please try again.",
+  "errorNetwork": "No internet connection. Please check your network.",
+  "errorInvalidCredentials": "Invalid email or password.",
+  "errorEmailAlreadyExists": "An account with this email already exists.",
+
+  "exploreJordan": "Explore Jordan",
+  "discoverHiddenGems": "Discover hidden gems across the Kingdom",
+
+  "language": "Language",
+  "arabic": "العربية",
+  "english": "English"
+}

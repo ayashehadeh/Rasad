@@ -1,0 +1,71 @@
+{
+  "@@locale": "ar",
+  "appName": "رصد",
+  "appTagline": "عين الأردن",
+
+  "signIn": "تسجيل الدخول",
+  "signUp": "إنشاء حساب",
+  "signOut": "تسجيل الخروج",
+
+  "email": "البريد الإلكتروني",
+  "emailHint": "أدخل بريدك الإلكتروني",
+  "password": "كلمة المرور",
+  "passwordHint": "أدخل كلمة المرور",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "confirmPasswordHint": "أعد إدخال كلمة المرور",
+  "fullName": "الاسم الكامل",
+  "fullNameHint": "أدخل اسمك الكامل",
+  "phoneNumber": "رقم الهاتف",
+  "phoneNumberHint": "07XXXXXXXX",
+  "nationalNumber": "الرقم الوطني",
+  "nationalNumberHint": "أدخل رقمك الوطني المكون من 10 أرقام",
+
+  "forgotPassword": "نسيت كلمة المرور؟",
+  "dontHaveAccount": "ليس لديك حساب؟",
+  "alreadyHaveAccount": "لديك حساب بالفعل؟",
+  "createAccount": "إنشاء حساب",
+  "welcomeBack": "مرحباً بعودتك",
+  "welcomeBackSub": "سجّل دخولك لاستكشاف الأردن",
+  "joinRasad": "انضم إلى رصد",
+  "joinRasadSub": "أنشئ حسابك وابدأ رحلتك",
+
+  "orContinueWith": "أو تابع بـ",
+  "continueWithGoogle": "المتابعة مع Google",
+
+  "validationEmailRequired": "البريد الإلكتروني مطلوب",
+  "validationEmailInvalid": "يرجى إدخال بريد إلكتروني صحيح",
+  "validationPasswordRequired": "كلمة المرور مطلوبة",
+  "validationPasswordWeak": "كلمة المرور يجب أن تكون 8 أحرف على الأقل مع أحرف كبيرة وأرقام",
+  "validationConfirmPasswordRequired": "يرجى تأكيد كلمة المرور",
+  "validationPasswordMismatch": "كلمتا المرور غير متطابقتين",
+  "validationFullNameRequired": "الاسم الكامل مطلوب",
+  "validationFullNameShort": "يجب أن يكون الاسم 3 أحرف على الأقل",
+  "validationPhoneRequired": "رقم الهاتف مطلوب",
+  "validationPhoneInvalid": "يرجى إدخال رقم أردني صحيح (07XXXXXXXX)",
+  "validationNationalNumberRequired": "الرقم الوطني مطلوب",
+  "validationNationalNumberInvalid": "يجب أن يكون الرقم الوطني 10 أرقام يبدأ بـ 1 أو 2",
+
+  "termsAgreement": "بإنشاء حساب، فإنك توافق على ",
+  "termsOfService": "شروط الخدمة",
+  "and": " و",
+  "privacyPolicy": "سياسة الخصوصية",
+
+  "loading": "جارٍ التحميل...",
+  "retry": "إعادة المحاولة",
+  "cancel": "إلغاء",
+  "next": "التالي",
+  "back": "رجوع",
+  "done": "تم",
+
+  "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "errorNetwork": "لا يوجد اتصال بالإنترنت. يرجى التحقق من شبكتك.",
+  "errorInvalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "errorEmailAlreadyExists": "يوجد حساب مرتبط بهذا البريد الإلكتروني.",
+
+  "exploreJordan": "استكشف الأردن",
+  "discoverHiddenGems": "اكتشف الجواهر الخفية في أرجاء المملكة",
+
+  "language": "اللغة",
+  "arabic": "العربية",
+  "english": "English"
+}
