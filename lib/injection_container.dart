@@ -4,17 +4,40 @@ import 'features/auth/domain/repositories/auth_repo.dart';
 import 'features/auth/domain/use cases/sign_in_usecase.dart';
 import 'features/auth/domain/use cases/sign_up_usecase.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/home/data/repositories/home_repository_impl.dart';
+import 'features/home/domain/repositories/home_repository.dart';
+import 'features/home/domain/use_cases/get_nearby_places_usecase.dart';
+import 'features/home/domain/use_cases/get_trending_places_usecase.dart';
+import 'features/home/presentation/Bloc/home_bloc.dart';
+// FIX: register the review feature's dependencies so ReviewBloc
+// can be resolved from the service locator (sl) in the router.
+import 'package:rasad/features/review/data/repositories/review_repositories_impl.dart';
+import 'package:rasad/features/review/domain/repositories/review_repositories.dart';
+import 'features/review/domain/use_cases/submit_review_usecase.dart';
+import 'features/review/presentation/bloc/review_bloc.dart';
 
 final sl = GetIt.instance;
 
 Future<void> setupDependencies() async {
-  // Repositories
+  // ── Auth ──────────────────────────────────────────────────────────────────
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());
-
-  // Use cases
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => SignUpUseCase(sl()));
-
-  // BLoCs
   sl.registerFactory(() => AuthBloc(signInUseCase: sl(), signUpUseCase: sl()));
+
+  // ── Home ──────────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl());
+  sl.registerLazySingleton(() => GetTrendingPlacesUseCase(sl()));
+  sl.registerLazySingleton(() => GetNearbyPlacesUseCase(sl()));
+  sl.registerFactory(
+    () => HomeBloc(
+      getTrendingPlacesUseCase: sl(),
+      getNearbyPlacesUseCase: sl(),
+    ),
+  );
+  
+  // ── Review ────────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<ReviewRepository>(() => ReviewRepositoryImpl());
+  sl.registerLazySingleton(() => SubmitReviewUseCase(sl()));
+  sl.registerFactory(() => ReviewBloc(submitReviewUseCase: sl()));
 }
