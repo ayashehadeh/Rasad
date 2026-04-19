@@ -9,10 +9,7 @@ class SignInRequested extends AuthEvent {
   final String email;
   final String password;
 
-  SignInRequested({
-    required this.email,
-    required this.password,
-  });
+  SignInRequested({required this.email, required this.password});
 
   @override
   List<Object?> get props => [email, password];
@@ -33,13 +30,18 @@ class SignUpRequested extends AuthEvent {
     required this.nationalNumber,
   });
 
+  // FIX: password was missing from props, meaning two SignUpRequested events
+  // with the same fields but different passwords would have been treated as
+  // equal by Equatable — causing the BLoC to de-duplicate and skip the
+  // second emission.
   @override
   List<Object?> get props => [
-        fullName,
-        email,
-        phoneNumber,
-        nationalNumber,
-      ];
+    fullName,
+    email,
+    password,
+    phoneNumber,
+    nationalNumber,
+  ];
 }
 
 class SignOutRequested extends AuthEvent {}

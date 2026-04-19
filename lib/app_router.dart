@@ -1,18 +1,30 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/screens/screens.dart';
+import 'features/home/presentation/Bloc/home_bloc.dart';
+import 'features/home/presentation/screens/home_screen.dart';
+import 'features/review/presentation/bloc/review_bloc.dart';
+import 'features/review/presentation/screens/add_review_screen.dart';
 import 'injection_container.dart';
 
 abstract class AppRoutes {
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const home = '/home';
+  static const review = '/review';
 }
 
 final appRouter = GoRouter(
-  initialLocation: AppRoutes.signIn,
+  // ─── CHANGE LANDING PAGE HERE ───────────────────────────────────────────────
+  // Swap the value below to any AppRoutes constant to change the first screen.
+  //
+  //   AppRoutes.signIn  → opens Sign In  (normal production flow)
+  //   AppRoutes.home    → opens Home     (skip auth during development)
+  //   AppRoutes.review  → opens Review   (jump straight to review screen)
+  //
+  initialLocation: AppRoutes.home,
+  // ────────────────────────────────────────────────────────────────────────────
   routes: [
     GoRoute(
       path: AppRoutes.signIn,
@@ -36,36 +48,28 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => const _PlaceholderHome(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<HomeBloc>(),
+        child: const HomeScreen(),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.review,
+      builder: (context, state) {
+        // Pass placeId / placeName via GoRouter extra:
+        //   context.go(AppRoutes.review, extra: {'placeId': 'petra', 'placeName': 'Petra'})
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return BlocProvider(
+          create: (_) => sl<ReviewBloc>(),
+          child: AddReviewScreen(
+            placeId: extra['placeId'] as String? ?? '',
+            placeName: extra['placeName'] as String? ?? 'Unknown Place',
+            userId: extra['userId'] as String? ?? '',
+            onBack: () => context.go(AppRoutes.home),
+            onSubmitSuccess: () => context.go(AppRoutes.home),
+          ),
+        );
+      },
     ),
   ],
 );
-
-// Placeholder — replace with real home screen
-class _PlaceholderHome extends StatelessWidget {
-  const _PlaceholderHome();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('🏛️', style: TextStyle(fontSize: 48)),
-            const SizedBox(height: 16),
-            Text(
-              'Welcome to Rasad',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Home screen coming soon...',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

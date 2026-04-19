@@ -34,10 +34,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _agreedToTerms = false;
 
   @override
+  void initState() {
+    super.initState();
+    // FIX: listen to national number changes so the checkmark suffix
+    // rebuilds reactively — previously the suffix read
+    // _nationalNumberController.text.length inside build() without a
+    // listener, so it never updated after the initial render.
+    _nationalNumberController.addListener(_onNationalNumberChanged);
+  }
+
+  void _onNationalNumberChanged() {
+    // Trigger rebuild only when crossing the completion boundary so we
+    // don't setState on every keystroke unnecessarily.
+    setState(() {});
+  }
+
+  @override
   void dispose() {
     _fullNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    // FIX: remove listener before disposing to avoid calling setState
+    // on a disposed widget.
+    _nationalNumberController.removeListener(_onNationalNumberChanged);
     _nationalNumberController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -128,13 +147,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             logoSize: 36,
                           ),
                           const Spacer(),
-                          const SizedBox(width: 40), // balance
+                          const SizedBox(width: 40),
                         ],
                       ),
 
                       const SizedBox(height: 28),
 
-                      // Headline
                       Text('Join Rasad', style: AppTextStyles.headlineLarge),
                       const SizedBox(height: 4),
                       Text(
@@ -146,11 +164,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 28),
 
-                      // ── Personal Info section ─────────────────────────
                       _SectionLabel(label: 'Personal Information'),
                       const SizedBox(height: 12),
 
-                      // Full name
                       AuthTextField(
                         controller: _fullNameController,
                         label: 'Full Name',
@@ -167,7 +183,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 14),
 
-                      // National number — key field for Jordan
+                      // FIX: suffix now updates reactively via the listener
+                      // added in initState; previously it was stuck at the
+                      // initial (empty) value because build() read the
+                      // controller length without any setState trigger.
                       AuthTextField(
                         controller: _nationalNumberController,
                         label: 'National Number',
@@ -198,7 +217,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 14),
 
-                      // Phone
                       AuthTextField(
                         controller: _phoneController,
                         label: 'Phone Number',
@@ -221,11 +239,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 22),
 
-                      // ── Account Info section ──────────────────────────
                       _SectionLabel(label: 'Account Details'),
                       const SizedBox(height: 12),
 
-                      // Email
                       AuthTextField(
                         controller: _emailController,
                         label: 'Email',
@@ -243,7 +259,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 14),
 
-                      // Password
                       AuthTextField(
                         controller: _passwordController,
                         label: 'Password',
@@ -261,7 +276,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 14),
 
-                      // Confirm password
                       AuthTextField(
                         controller: _confirmPasswordController,
                         label: 'Confirm Password',
@@ -281,7 +295,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 20),
 
-                      // Terms & conditions
                       _TermsCheckbox(
                         value: _agreedToTerms,
                         onChanged: isLoading
@@ -292,7 +305,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Sign up button
                       AuthPrimaryButton(
                         label: 'Create Account',
                         onPressed: _submit,
@@ -301,7 +313,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Divider
                       const AuthDividerOr(label: 'Or continue with'),
                       const SizedBox(height: 20),
 
@@ -312,7 +323,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 28),
 
-                      // Sign in link
                       Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
