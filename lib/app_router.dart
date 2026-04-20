@@ -2,6 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/screens/screens.dart';
+import 'features/explore/presentation/bloc/explore_bloc.dart';
+import 'features/explore/presentation/bloc/place_details_bloc.dart';
+import 'features/explore/presentation/screens/explore_screen.dart';
+import 'features/explore/presentation/screens/place_details_screen.dart';
 import 'features/home/presentation/Bloc/home_bloc.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'features/review/presentation/bloc/review_bloc.dart';
@@ -12,6 +16,8 @@ abstract class AppRoutes {
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const home = '/home';
+  static const explore = '/explore';
+  static const placeDetails = '/explore/place-details';
   static const review = '/review';
 }
 
@@ -54,19 +60,37 @@ final appRouter = GoRouter(
       ),
     ),
     GoRoute(
+      path: AppRoutes.explore,
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<ExploreBloc>(),
+        child: const ExploreScreen(),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.placeDetails,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return BlocProvider(
+          create: (_) => sl<PlaceDetailsBloc>(),
+          child: PlaceDetailsScreen(placeId: extra['placeId'] as String? ?? ''),
+        );
+      },
+    ),
+    GoRoute(
       path: AppRoutes.review,
       builder: (context, state) {
         // Pass placeId / placeName via GoRouter extra:
         //   context.go(AppRoutes.review, extra: {'placeId': 'petra', 'placeName': 'Petra'})
         final extra = state.extra as Map<String, dynamic>? ?? {};
+        final returnRoute = extra['returnRoute'] as String? ?? AppRoutes.home;
         return BlocProvider(
           create: (_) => sl<ReviewBloc>(),
           child: AddReviewScreen(
             placeId: extra['placeId'] as String? ?? '',
             placeName: extra['placeName'] as String? ?? 'Unknown Place',
             userId: extra['userId'] as String? ?? '',
-            onBack: () => context.go(AppRoutes.home),
-            onSubmitSuccess: () => context.go(AppRoutes.home),
+            onBack: () => context.go(returnRoute),
+            onSubmitSuccess: () => context.go(returnRoute),
           ),
         );
       },
