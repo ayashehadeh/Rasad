@@ -108,13 +108,19 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onTabChanged(HomeNavTab tab) {
     setState(() => _currentTab = tab);
 
+    if (tab == HomeNavTab.explore) {
+      context.go(AppRoutes.explore);
+      return;
+    }
+
     if (tab == HomeNavTab.add) {
-      context.go(
+      context.push(
         AppRoutes.review,
         extra: const {
           'placeId': 'petra',
           'placeName': 'The Treasury, Petra',
           'userId': 'guest-user',
+          'returnRoute': AppRoutes.home,
         },
       );
       return;
@@ -131,12 +137,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _goToReviewForPlace(PlaceEntity place) {
-    context.go(
+    context.push(
       AppRoutes.review,
       extra: {
         'placeId': place.id,
         'placeName': place.name,
         'userId': 'guest-user',
+        'returnRoute': AppRoutes.home,
       },
     );
   }

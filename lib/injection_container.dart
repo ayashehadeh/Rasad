@@ -4,6 +4,12 @@ import 'features/auth/domain/repositories/auth_repo.dart';
 import 'features/auth/domain/use cases/sign_in_usecase.dart';
 import 'features/auth/domain/use cases/sign_up_usecase.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/explore/data/repositories/explore_repository_impl.dart';
+import 'features/explore/domain/repositories/explore_repository.dart';
+import 'features/explore/domain/use_cases/get_explore_places_usecase.dart';
+import 'features/explore/domain/use_cases/get_place_details_usecase.dart';
+import 'features/explore/presentation/bloc/explore_bloc.dart';
+import 'features/explore/presentation/bloc/place_details_bloc.dart';
 import 'features/home/data/repositories/home_repository_impl.dart';
 import 'features/home/domain/repositories/home_repository.dart';
 import 'features/home/domain/use_cases/get_nearby_places_usecase.dart';
@@ -35,7 +41,14 @@ Future<void> setupDependencies() async {
       getNearbyPlacesUseCase: sl(),
     ),
   );
-  
+
+  // ── Explore ───────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<ExploreRepository>(() => ExploreRepositoryImpl());
+  sl.registerLazySingleton(() => GetExplorePlacesUseCase(sl()));
+  sl.registerLazySingleton(() => GetPlaceDetailsUseCase(sl()));
+  sl.registerFactory(() => ExploreBloc(getExplorePlacesUseCase: sl()));
+  sl.registerFactory(() => PlaceDetailsBloc(getPlaceDetailsUseCase: sl()));
+
   // ── Review ────────────────────────────────────────────────────────────────
   sl.registerLazySingleton<ReviewRepository>(() => ReviewRepositoryImpl());
   sl.registerLazySingleton(() => SubmitReviewUseCase(sl()));
