@@ -2,6 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/screens/screens.dart';
+import 'features/rewards/presentation/bloc/rewards_bloc.dart';
+import 'features/rewards/presentation/screens/rewards_screen.dart';
+import 'features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
+import 'features/trip_planner/presentation/screens/trip_planner_chatbot_screen.dart';
 import 'features/explore/presentation/bloc/explore_bloc.dart';
 import 'features/explore/presentation/bloc/place_details_bloc.dart';
 import 'features/explore/presentation/screens/explore_screen.dart';
@@ -16,6 +20,7 @@ abstract class AppRoutes {
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const home = '/home';
+  static const rewards = '/rewards';
   static const explore = '/explore';
   static const placeDetails = '/explore/place-details';
   static const review = '/review';
@@ -55,6 +60,16 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.home,
       builder: (context, state) => BlocProvider(
+        create: (_) => sl<TripPlannerBloc>(),
+        child: const TripPlannerScreen(),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.rewards,
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<RewardsBloc>(),
+        child: const RewardsScreen(),
+      ),
         create: (_) => sl<HomeBloc>(),
         child: const HomeScreen(),
       ),

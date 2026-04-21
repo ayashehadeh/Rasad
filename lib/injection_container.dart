@@ -4,6 +4,8 @@ import 'features/auth/domain/repositories/auth_repo.dart';
 import 'features/auth/domain/use cases/sign_in_usecase.dart';
 import 'features/auth/domain/use cases/sign_up_usecase.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/rewards/presentation/bloc/rewards_bloc.dart';
+import 'features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
 import 'features/explore/data/repositories/explore_repository_impl.dart';
 import 'features/explore/domain/repositories/explore_repository.dart';
 import 'features/explore/domain/use_cases/get_explore_places_usecase.dart';
@@ -30,6 +32,8 @@ Future<void> setupDependencies() async {
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => SignUpUseCase(sl()));
   sl.registerFactory(() => AuthBloc(signInUseCase: sl(), signUpUseCase: sl()));
+  sl.registerFactory(TripPlannerBloc.new);
+  sl.registerFactory(RewardsBloc.new);
 
   // ── Home ──────────────────────────────────────────────────────────────────
   sl.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl());
