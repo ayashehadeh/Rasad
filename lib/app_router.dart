@@ -20,6 +20,7 @@ abstract class AppRoutes {
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const home = '/home';
+  static const tripPlanner = '/trip-planner';
   static const rewards = '/rewards';
   static const explore = '/explore';
   static const placeDetails = '/explore/place-details';
@@ -60,6 +61,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.home,
       builder: (context, state) => BlocProvider(
+        create: (_) => sl<HomeBloc>(),
+        child: const HomeScreen(),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.tripPlanner,
+      builder: (context, state) => BlocProvider(
         create: (_) => sl<TripPlannerBloc>(),
         child: const TripPlannerScreen(),
       ),
@@ -69,9 +77,6 @@ final appRouter = GoRouter(
       builder: (context, state) => BlocProvider(
         create: (_) => sl<RewardsBloc>(),
         child: const RewardsScreen(),
-      ),
-        create: (_) => sl<HomeBloc>(),
-        child: const HomeScreen(),
       ),
     ),
     GoRoute(

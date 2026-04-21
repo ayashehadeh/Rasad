@@ -9,15 +9,15 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.backgroundDark,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.accentGold,
         surface: AppColors.backgroundCard,
         error: AppColors.error,
         onPrimary: AppColors.textOnPrimary,
-        onSecondary: AppColors.backgroundDark,
+        onSecondary: AppColors.textPrimary,
         onSurface: AppColors.textPrimary,
         onError: AppColors.textOnPrimary,
       ),
@@ -31,7 +31,7 @@ class AppTheme {
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
         ),
         titleTextStyle: AppTextStyles.headlineMedium,
         iconTheme: IconThemeData(color: AppColors.textPrimary),
@@ -136,8 +136,10 @@ class AppTheme {
 
       // Snackbar
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.backgroundElevated,
-        contentTextStyle: AppTextStyles.bodyMedium,
+        backgroundColor: AppColors.backgroundCard,
+        contentTextStyle: AppTextStyles.bodyMedium.copyWith(
+          color: AppColors.textPrimary,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         behavior: SnackBarBehavior.floating,
       ),
