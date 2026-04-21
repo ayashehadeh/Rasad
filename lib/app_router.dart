@@ -1,14 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/screens/screens.dart';
+import 'features/rewards/presentation/bloc/rewards_bloc.dart';
+import 'features/rewards/presentation/screens/rewards_screen.dart';
+import 'features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
+import 'features/trip_planner/presentation/screens/trip_planner_chatbot_screen.dart';
 import 'injection_container.dart';
 
 abstract class AppRoutes {
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const home = '/home';
+  static const rewards = '/rewards';
 }
 
 final appRouter = GoRouter(
@@ -36,36 +40,17 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => const _PlaceholderHome(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TripPlannerBloc>(),
+        child: const TripPlannerScreen(),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.rewards,
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<RewardsBloc>(),
+        child: const RewardsScreen(),
+      ),
     ),
   ],
 );
-
-// Placeholder — replace with real home screen
-class _PlaceholderHome extends StatelessWidget {
-  const _PlaceholderHome();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('🏛️', style: TextStyle(fontSize: 48)),
-            const SizedBox(height: 16),
-            Text(
-              'Welcome to Rasad',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Home screen coming soon...',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

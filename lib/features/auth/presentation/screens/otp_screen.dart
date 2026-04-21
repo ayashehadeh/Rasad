@@ -219,7 +219,7 @@ class _OtpScreenState extends State<OtpScreen>
                           color: AppColors.backgroundElevated,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: AppColors.primary.withOpacity(0.3),
+                            color: AppColors.primary.withValues(alpha: 0.3),
                             width: 1.5,
                           ),
                         ),
@@ -433,7 +433,7 @@ class _OtpDigitBoxState extends State<_OtpDigitBox> {
     } else if (_isFocused) {
       borderColor = AppColors.primary;
     } else if (hasFill) {
-      borderColor = AppColors.accentGold.withOpacity(0.5);
+      borderColor = AppColors.accentGold.withValues(alpha: 0.5);
     } else {
       borderColor = AppColors.border;
     }
@@ -444,7 +444,7 @@ class _OtpDigitBoxState extends State<_OtpDigitBox> {
       height: 56,
       decoration: BoxDecoration(
         color: _isFocused
-            ? AppColors.primary.withOpacity(0.08)
+            ? AppColors.primary.withValues(alpha: 0.08)
             : hasFill
                 ? AppColors.backgroundElevated
                 : AppColors.backgroundCard,
@@ -456,7 +456,7 @@ class _OtpDigitBoxState extends State<_OtpDigitBox> {
         boxShadow: _isFocused
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.15),
+                  color: AppColors.primary.withValues(alpha: 0.15),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -527,7 +527,7 @@ class _VerifyButton extends StatelessWidget {
         boxShadow: isFilled && !isLoading
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   blurRadius: 16,
                   offset: const Offset(0, 6),
                 ),

@@ -25,8 +25,8 @@ class JordanBackgroundDecoration extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.18),
-                  AppColors.primary.withOpacity(0.04),
+                  AppColors.primary.withValues(alpha: 0.18),
+                  AppColors.primary.withValues(alpha: 0.04),
                   Colors.transparent,
                 ],
               ),
@@ -45,7 +45,7 @@ class JordanBackgroundDecoration extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppColors.accentGold.withOpacity(0.10),
+                  AppColors.accentGold.withValues(alpha: 0.10),
                   Colors.transparent,
                 ],
               ),
@@ -67,7 +67,7 @@ class _PatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.border.withOpacity(0.25)
+      ..color = AppColors.border.withValues(alpha: 0.25)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
