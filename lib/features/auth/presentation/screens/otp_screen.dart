@@ -9,12 +9,8 @@ import '../bloc/auth_state.dart';
 import '../widgets/widgets.dart';
 
 class OtpScreen extends StatefulWidget {
-  /// The phone number or email the OTP was sent to (for display only)
   final String destination;
-
-  /// 'phone' or 'email'
   final String destinationType;
-
   final VoidCallback onVerified;
   final VoidCallback onBack;
 
@@ -35,10 +31,22 @@ class _OtpScreenState extends State<OtpScreen>
   static const int _otpLength = 6;
   static const int _resendCooldown = 60;
 
-  final List<TextEditingController> _controllers =
-      List.generate(_otpLength, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes =
-      List.generate(_otpLength, (_) => FocusNode());
+  final List<TextEditingController> _controllers = List.generate(
+    _otpLength,
+    (_) => TextEditingController(),
+  );
+  final List<FocusNode> _focusNodes = List.generate(
+    _otpLength,
+    (_) => FocusNode(),
+  );
+
+  // FIX: each _OtpDigitBox was creating an anonymous FocusNode for its
+  // KeyboardListener and never disposing it. We manage one shared node here
+  // instead and pass it down (see _OtpDigitBox below).
+  final List<FocusNode> _keyboardListenerNodes = List.generate(
+    _otpLength,
+    (_) => FocusNode(),
+  );
 
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
@@ -50,7 +58,6 @@ class _OtpScreenState extends State<OtpScreen>
   @override
   void initState() {
     super.initState();
-
     _shakeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -58,12 +65,9 @@ class _OtpScreenState extends State<OtpScreen>
     _shakeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
     );
-
     _startTimer();
-
-    // Auto-focus first field
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNodes[0].requestFocus();
+      if (mounted) _focusNodes[0].requestFocus();
     });
   }
 
@@ -76,14 +80,24 @@ class _OtpScreenState extends State<OtpScreen>
     for (final f in _focusNodes) {
       f.dispose();
     }
+    // FIX: dispose the listener nodes we own.
+    for (final f in _keyboardListenerNodes) {
+      f.dispose();
+    }
     _shakeController.dispose();
     super.dispose();
   }
 
   void _startTimer() {
     _timer?.cancel();
+    // FIX: guard setState to prevent calling it after dispose when the timer
+    // fires on a widget that has already left the tree.
     setState(() => _secondsLeft = _resendCooldown);
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
       if (_secondsLeft == 0) {
         t.cancel();
       } else {
@@ -97,14 +111,10 @@ class _OtpScreenState extends State<OtpScreen>
 
   void _onDigitEntered(int index, String value) {
     if (value.isEmpty) return;
-
-    // Accept only the last character if multiple pasted
-    final digit = value.isNotEmpty ? value[value.length - 1] : '';
+    final digit = value[value.length - 1];
     _controllers[index].text = digit;
-    _controllers[index].selection = TextSelection.collapsed(offset: 1);
-
+    _controllers[index].selection = const TextSelection.collapsed(offset: 1);
     setState(() => _hasError = false);
-
     if (index < _otpLength - 1) {
       _focusNodes[index + 1].requestFocus();
     } else {
@@ -132,13 +142,11 @@ class _OtpScreenState extends State<OtpScreen>
 
   String get _maskedDestination {
     if (widget.destinationType == 'phone') {
-      // Show last 4 digits: ****1234
       if (widget.destination.length > 4) {
         return '****${widget.destination.substring(widget.destination.length - 4)}';
       }
       return widget.destination;
     } else {
-      // Show first 3 chars + domain: tes***@example.com
       final parts = widget.destination.split('@');
       if (parts.length == 2 && parts[0].length > 2) {
         return '${parts[0].substring(0, 3)}***@${parts[1]}';
@@ -155,7 +163,6 @@ class _OtpScreenState extends State<OtpScreen>
           widget.onVerified();
         } else if (state is AuthFailure) {
           _triggerShake();
-          // Clear all fields on failure
           for (final c in _controllers) {
             c.clear();
           }
@@ -175,7 +182,6 @@ class _OtpScreenState extends State<OtpScreen>
                   children: [
                     const SizedBox(height: 36),
 
-                    // ── Top bar ────────────────────────────────────────
                     Row(
                       children: [
                         GestureDetector(
@@ -210,7 +216,6 @@ class _OtpScreenState extends State<OtpScreen>
 
                     const SizedBox(height: 40),
 
-                    // ── Icon ───────────────────────────────────────────
                     Center(
                       child: Container(
                         width: 72,
@@ -237,7 +242,6 @@ class _OtpScreenState extends State<OtpScreen>
 
                     const SizedBox(height: 24),
 
-                    // ── Headline ───────────────────────────────────────
                     Center(
                       child: Text(
                         'Verify Your Code',
@@ -273,7 +277,6 @@ class _OtpScreenState extends State<OtpScreen>
 
                     const SizedBox(height: 40),
 
-                    // ── OTP input row ──────────────────────────────────
                     AnimatedBuilder(
                       animation: _shakeAnimation,
                       builder: (context, child) {
@@ -295,6 +298,9 @@ class _OtpScreenState extends State<OtpScreen>
                           return _OtpDigitBox(
                             controller: _controllers[i],
                             focusNode: _focusNodes[i],
+                            // FIX: pass the pre-created node instead of
+                            // allocating a new one inside the widget.
+                            keyboardListenerNode: _keyboardListenerNodes[i],
                             hasError: _hasError,
                             enabled: !isLoading,
                             onChanged: (v) => _onDigitEntered(i, v),
@@ -304,7 +310,6 @@ class _OtpScreenState extends State<OtpScreen>
                       ),
                     ),
 
-                    // ── Error hint ─────────────────────────────────────
                     AnimatedOpacity(
                       opacity: _hasError ? 1 : 0,
                       duration: const Duration(milliseconds: 200),
@@ -323,7 +328,6 @@ class _OtpScreenState extends State<OtpScreen>
 
                     const SizedBox(height: 36),
 
-                    // ── Verify button ──────────────────────────────────
                     _VerifyButton(
                       isFilled: _isFilled,
                       isLoading: isLoading,
@@ -332,7 +336,6 @@ class _OtpScreenState extends State<OtpScreen>
 
                     const SizedBox(height: 28),
 
-                    // ── Resend ─────────────────────────────────────────
                     Center(
                       child: _secondsLeft > 0
                           ? RichText(
@@ -359,13 +362,10 @@ class _OtpScreenState extends State<OtpScreen>
                                     color: AppColors.textSecondary,
                                   ),
                                   children: [
-                                    const TextSpan(
-                                      text: "Didn't receive it? ",
-                                    ),
+                                    const TextSpan(text: "Didn't receive it? "),
                                     TextSpan(
                                       text: 'Resend Code',
-                                      style: AppTextStyles.labelMedium
-                                          .copyWith(
+                                      style: AppTextStyles.labelMedium.copyWith(
                                         color: AppColors.primary,
                                         decoration: TextDecoration.underline,
                                         decorationColor: AppColors.primary,
@@ -394,6 +394,9 @@ class _OtpScreenState extends State<OtpScreen>
 class _OtpDigitBox extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
+  // FIX: accept the externally-owned FocusNode for KeyboardListener
+  // so it is disposed by the parent, not leaked here.
+  final FocusNode keyboardListenerNode;
   final bool hasError;
   final bool enabled;
   final ValueChanged<String> onChanged;
@@ -402,6 +405,7 @@ class _OtpDigitBox extends StatefulWidget {
   const _OtpDigitBox({
     required this.controller,
     required this.focusNode,
+    required this.keyboardListenerNode,
     required this.hasError,
     required this.enabled,
     required this.onChanged,
@@ -418,16 +422,25 @@ class _OtpDigitBoxState extends State<_OtpDigitBox> {
   @override
   void initState() {
     super.initState();
-    widget.focusNode.addListener(() {
-      setState(() => _isFocused = widget.focusNode.hasFocus);
-    });
+    widget.focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    // FIX: guard against setState after dispose.
+    if (mounted) setState(() => _isFocused = widget.focusNode.hasFocus);
+  }
+
+  @override
+  void dispose() {
+    widget.focusNode.removeListener(_onFocusChange);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final bool hasFill = widget.controller.text.isNotEmpty;
 
-    Color borderColor;
+    final Color borderColor;
     if (widget.hasError) {
       borderColor = AppColors.error;
     } else if (_isFocused) {
@@ -446,8 +459,8 @@ class _OtpDigitBoxState extends State<_OtpDigitBox> {
         color: _isFocused
             ? AppColors.primary.withValues(alpha: 0.08)
             : hasFill
-                ? AppColors.backgroundElevated
-                : AppColors.backgroundCard,
+            ? AppColors.backgroundElevated
+            : AppColors.backgroundCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: borderColor,
@@ -464,7 +477,7 @@ class _OtpDigitBoxState extends State<_OtpDigitBox> {
             : null,
       ),
       child: KeyboardListener(
-        focusNode: FocusNode(),
+        focusNode: widget.keyboardListenerNode, // FIX: use parent-owned node
         onKeyEvent: (event) {
           if (event is KeyDownEvent &&
               event.logicalKey == LogicalKeyboardKey.backspace) {
@@ -500,7 +513,7 @@ class _OtpDigitBoxState extends State<_OtpDigitBox> {
   }
 }
 
-// ── Verify Button with fill animation ─────────────────────────────────────────
+// ── Verify Button ─────────────────────────────────────────────────────────────
 
 class _VerifyButton extends StatelessWidget {
   final bool isFilled;
