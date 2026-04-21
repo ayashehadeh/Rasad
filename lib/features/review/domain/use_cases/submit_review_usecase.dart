@@ -11,11 +11,15 @@ class SubmitReviewUseCase {
     required String placeId,
     required String userId,
     required int stars,
+    required String comment,
+    required List<String> photos,
   }) {
     return _repository.submitReview(
       placeId: placeId,
       userId: userId,
       stars: stars,
+      comment: comment,
+      photos: photos,
     );
   }
 }

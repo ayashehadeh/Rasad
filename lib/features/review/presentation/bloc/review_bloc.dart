@@ -27,6 +27,8 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
       placeId: event.placeId,
       userId: event.userId,
       stars: event.stars,
+      comment: event.comment,
+      photos: event.photos,
     );
     result.fold(
       (failure) => emit(ReviewFailure(failure, event.stars)),

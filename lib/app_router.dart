@@ -20,6 +20,7 @@ abstract class AppRoutes {
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const home = '/home';
+  static const tripPlanner = '/trip-planner';
   static const rewards = '/rewards';
   static const explore = '/explore';
   static const placeDetails = '/explore/place-details';
@@ -27,15 +28,7 @@ abstract class AppRoutes {
 }
 
 final appRouter = GoRouter(
-  // ─── CHANGE LANDING PAGE HERE ───────────────────────────────────────────────
-  // Swap the value below to any AppRoutes constant to change the first screen.
-  //
-  //   AppRoutes.signIn  → opens Sign In  (normal production flow)
-  //   AppRoutes.home    → opens Home     (skip auth during development)
-  //   AppRoutes.review  → opens Review   (jump straight to review screen)
-  //
   initialLocation: AppRoutes.home,
-  // ────────────────────────────────────────────────────────────────────────────
   routes: [
     GoRoute(
       path: AppRoutes.signIn,
@@ -58,7 +51,7 @@ final appRouter = GoRouter(
       ),
     ),
     GoRoute(
-      path: AppRoutes.home,
+      path: AppRoutes.tripPlanner,
       builder: (context, state) => BlocProvider(
         create: (_) => sl<TripPlannerBloc>(),
         child: const TripPlannerScreen(),
@@ -70,6 +63,10 @@ final appRouter = GoRouter(
         create: (_) => sl<RewardsBloc>(),
         child: const RewardsScreen(),
       ),
+    ),
+    GoRoute(
+      path: AppRoutes.home,
+      builder: (context, state) => BlocProvider(
         create: (_) => sl<HomeBloc>(),
         child: const HomeScreen(),
       ),

@@ -6,6 +6,8 @@ class ReviewModel extends ReviewEntity {
     required super.placeId,
     required super.userId,
     required super.stars,
+    required super.comment,
+    required super.photos,
     required super.createdAt,
   });
 
@@ -15,6 +17,8 @@ class ReviewModel extends ReviewEntity {
       placeId: json['place_id'] as String,
       userId: json['user_id'] as String,
       stars: json['stars'] as int,
+      comment: json['comment'] as String? ?? '',
+      photos: (json['photos'] as List<dynamic>? ?? []).cast<String>(),
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }
@@ -25,6 +29,8 @@ class ReviewModel extends ReviewEntity {
       'place_id': placeId,
       'user_id': userId,
       'stars': stars,
+      'comment': comment,
+      'photos': photos,
       'created_at': createdAt.toIso8601String(),
     };
   }

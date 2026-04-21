@@ -6,5 +6,7 @@ abstract class ReviewRepository {
     required String placeId,
     required String userId,
     required int stars,
+    required String comment,
+    required List<String> photos,
   });
 }

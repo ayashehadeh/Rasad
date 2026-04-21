@@ -9,15 +9,19 @@ class ReviewSubmitRequested extends ReviewEvent {
   final String placeId;
   final String userId;
   final int stars;
+  final String comment;
+  final List<String> photos;
 
   ReviewSubmitRequested({
     required this.placeId,
     required this.userId,
     required this.stars,
+    required this.comment,
+    required this.photos,
   });
 
   @override
-  List<Object?> get props => [placeId, userId, stars];
+  List<Object?> get props => [placeId, userId, stars, comment, photos];
 }
 
 class ReviewStarSelected extends ReviewEvent {
