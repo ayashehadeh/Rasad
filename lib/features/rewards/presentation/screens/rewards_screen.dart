@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rasad/app_router.dart';
 import '../../../../core/constatnts/app_constants.dart';
 import '../../../../core/theme/theme.dart';
+import '../../../home/presentation/widgets/home_nav_bar.dart';
 import '../../domain/entities/reward_entity.dart';
 import '../bloc/rewards_bloc.dart';
 import '../bloc/rewards_event.dart';
@@ -15,10 +18,48 @@ class RewardsScreen extends StatefulWidget {
 }
 
 class _RewardsScreenState extends State<RewardsScreen> {
+  HomeNavTab _currentTab = HomeNavTab.rewards;
+
   @override
   void initState() {
     super.initState();
     context.read<RewardsBloc>().add(const RewardsLoadRequested());
+  }
+
+  void _onTabChanged(HomeNavTab tab) {
+    setState(() => _currentTab = tab);
+
+    if (tab == HomeNavTab.home) {
+      context.go(AppRoutes.home);
+      return;
+    }
+
+    if (tab == HomeNavTab.explore) {
+      context.go(AppRoutes.explore);
+      return;
+    }
+
+    if (tab == HomeNavTab.add) {
+      context.push(
+        AppRoutes.review,
+        extra: const {
+          'placeId': 'petra',
+          'placeName': 'The Treasury, Petra',
+          'userId': 'guest-user',
+          'returnRoute': AppRoutes.rewards,
+        },
+      );
+      return;
+    }
+
+    if (tab == HomeNavTab.rewards) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('This section is coming soon.'),
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 
   @override
@@ -33,13 +74,23 @@ class _RewardsScreenState extends State<RewardsScreen> {
       },
       builder: (context, state) {
         if (state is RewardsLoading || state is RewardsInitial) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return Scaffold(
+            body: const Center(child: CircularProgressIndicator()),
+            bottomNavigationBar: HomeNavBar(
+              currentTab: _currentTab,
+              onTabChanged: _onTabChanged,
+            ),
           );
         }
 
         if (state is RewardsFailure) {
-          return Scaffold(body: Center(child: Text(state.message)));
+          return Scaffold(
+            body: Center(child: Text(state.message)),
+            bottomNavigationBar: HomeNavBar(
+              currentTab: _currentTab,
+              onTabChanged: _onTabChanged,
+            ),
+          );
         }
 
         if (state is RewardsLoaded) {
@@ -79,6 +130,10 @@ class _RewardsScreenState extends State<RewardsScreen> {
                       ),
                 );
               },
+            ),
+            bottomNavigationBar: HomeNavBar(
+              currentTab: _currentTab,
+              onTabChanged: _onTabChanged,
             ),
           );
         }

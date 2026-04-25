@@ -137,6 +137,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
       return;
     }
 
+    if (tab == HomeNavTab.rewards) {
+      context.go(AppRoutes.rewards);
+      return;
+    }
+
     if (tab == HomeNavTab.add) {
       context.push(
         AppRoutes.review,
