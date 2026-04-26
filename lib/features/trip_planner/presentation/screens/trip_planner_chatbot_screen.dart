@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/constatnts/app_constants.dart';
 import '../../../../core/theme/theme.dart';
 import '../../domain/entities/chat_message.dart';
@@ -27,7 +28,9 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
 
   void _onTextChanged() {
     final has = _inputController.text.trim().isNotEmpty;
-    if (has != _hasText) setState(() => _hasText = has);
+    if (has != _hasText) {
+      setState(() => _hasText = has);
+    }
   }
 
   @override
@@ -39,14 +42,17 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
 
   void _send() {
     final text = _inputController.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty) {
+      return;
+    }
+
     _inputController.clear();
     context.read<TripPlannerBloc>().add(TripPlannerMessageSent(text));
     _scrollToBottom();
   }
 
-  void _tapSuggestion(String s) {
-    context.read<TripPlannerBloc>().add(TripPlannerSuggestionTapped(s));
+  void _tapSuggestion(String suggestion) {
+    context.read<TripPlannerBloc>().add(TripPlannerSuggestionTapped(suggestion));
     _scrollToBottom();
   }
 
@@ -66,7 +72,9 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<TripPlannerBloc, TripPlannerState>(
       listener: (context, state) {
-        if (state is TripPlannerActive) _scrollToBottom();
+        if (state is TripPlannerActive) {
+          _scrollToBottom();
+        }
       },
       builder: (context, state) {
         final active = state is TripPlannerActive ? state : null;
@@ -126,7 +134,11 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Center(
-              child: Text('🗺️', style: TextStyle(fontSize: 18)),
+              child: Icon(
+                Icons.smart_toy_rounded,
+                color: AppColors.textOnPrimary,
+                size: 18,
+              ),
             ),
           ),
           const SizedBox(width: 10),
@@ -167,8 +179,9 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
               color: AppColors.textSecondary,
               size: 20,
             ),
-            onPressed: () =>
-                context.read<TripPlannerBloc>().add(const TripPlannerChatCleared()),
+            onPressed: () => context.read<TripPlannerBloc>().add(
+              const TripPlannerChatCleared(),
+            ),
             tooltip: 'New conversation',
           ),
         const SizedBox(width: 4),
@@ -195,11 +208,11 @@ class _ChatList extends StatelessWidget {
       controller: scrollController,
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       itemCount: itemCount,
-      itemBuilder: (context, i) {
-        if (i == messages.length && isBotTyping) {
+      itemBuilder: (context, index) {
+        if (index == messages.length && isBotTyping) {
           return const _TypingIndicator();
         }
-        return _MessageBubble(message: messages[i]);
+        return _MessageBubble(message: messages[index]);
       },
     );
   }
@@ -207,6 +220,7 @@ class _ChatList extends StatelessWidget {
 
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
+
   const _MessageBubble({required this.message});
 
   bool get _isUser => message.sender == MessageSender.user;
@@ -244,13 +258,14 @@ class _MessageBubble extends StatelessWidget {
     if (!_isUser && message.responseType == BotResponseType.plan) {
       return _PlanBubble(message: message);
     }
+
     return _TextBubble(message: message, isUser: _isUser);
   }
 
-  String _formatTime(DateTime dt) {
-    final h = dt.hour.toString().padLeft(2, '0');
-    final m = dt.minute.toString().padLeft(2, '0');
-    return '$h:$m';
+  String _formatTime(DateTime dateTime) {
+    final hour = dateTime.hour.toString().padLeft(2, '0');
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 }
 
@@ -268,7 +283,13 @@ class _BotAvatar extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Center(child: Text('🗺️', style: TextStyle(fontSize: 14))),
+      child: const Center(
+        child: Icon(
+          Icons.smart_toy_rounded,
+          color: AppColors.textOnPrimary,
+          size: 14,
+        ),
+      ),
     );
   }
 }
@@ -276,6 +297,7 @@ class _BotAvatar extends StatelessWidget {
 class _TextBubble extends StatelessWidget {
   final ChatMessage message;
   final bool isUser;
+
   const _TextBubble({required this.message, required this.isUser});
 
   @override
@@ -308,6 +330,7 @@ class _TextBubble extends StatelessWidget {
 
 class _PlanBubble extends StatelessWidget {
   final ChatMessage message;
+
   const _PlanBubble({required this.message});
 
   @override
@@ -330,7 +353,7 @@ class _PlanBubble extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: (message.planItems ?? [])
+          children: (message.planItems ?? const [])
               .map(
                 (item) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -392,9 +415,9 @@ class _SuggestionChips extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         itemCount: suggestions.length,
         separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (context, i) {
+        itemBuilder: (context, index) {
           return GestureDetector(
-            onTap: () => onTap(suggestions[i]),
+            onTap: () => onTap(suggestions[index]),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
@@ -402,7 +425,10 @@ class _SuggestionChips extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppConstants.radiusFull),
                 border: Border.all(color: AppColors.border, width: 1),
               ),
-              child: Text(suggestions[i], style: AppTextStyles.labelMedium),
+              child: Text(
+                suggestions[index],
+                style: AppTextStyles.labelMedium,
+              ),
             ),
           );
         },
@@ -440,7 +466,9 @@ class _InputBar extends StatelessWidget {
               controller: controller,
               enabled: !isTyping,
               decoration: InputDecoration(
-                hintText: isTyping ? 'Rasad AI is thinking...' : 'Ask about Jordan...',
+                hintText: isTyping
+                    ? 'Rasad AI is thinking...'
+                    : 'Ask about Jordan...',
               ),
             ),
           ),
@@ -472,13 +500,40 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('🗺️', style: TextStyle(fontSize: 52)),
-          const SizedBox(height: 16),
-          Text('Rasad AI Planner', style: AppTextStyles.headlineMedium),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppColors.primary, AppColors.primaryDark],
+                ),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: const Icon(
+                Icons.smart_toy_rounded,
+                color: AppColors.textOnPrimary,
+                size: 34,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text('Rasad AI Planner', style: AppTextStyles.headlineMedium),
+            const SizedBox(height: 8),
+            Text(
+              'Ask for itineraries, places, and travel ideas in Jordan.',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

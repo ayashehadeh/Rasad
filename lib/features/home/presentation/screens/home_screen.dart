@@ -97,6 +97,15 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ),
+        floatingActionButton: FloatingActionButton.extended(
+          heroTag: 'home_chatbot_fab',
+          onPressed: () => context.push(AppRoutes.tripPlanner),
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.textOnPrimary,
+          icon: const Icon(Icons.smart_toy_rounded),
+          label: const Text('Chatbot'),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         bottomNavigationBar: HomeNavBar(
           currentTab: _currentTab,
           onTabChanged: _onTabChanged,
