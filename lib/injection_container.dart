@@ -5,6 +5,11 @@ import 'features/auth/domain/use cases/sign_in_usecase.dart';
 import 'features/auth/domain/use cases/sign_up_usecase.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/rewards/presentation/bloc/rewards_bloc.dart';
+import 'features/trip_planner/data/datasources/trip_planner_local_datasource.dart';
+import 'features/trip_planner/data/repositories/trip_planner_repository_impl.dart';
+import 'features/trip_planner/domain/repositories/trip_planner_repository.dart';
+import 'features/trip_planner/domain/use_cases/get_trip_planner_suggestions_usecase.dart';
+import 'features/trip_planner/domain/use_cases/send_trip_planner_message_usecase.dart';
 import 'features/trip_planner/presentation/bloc/trip_planner_bloc.dart';
 import 'features/explore/data/repositories/explore_repository_impl.dart';
 import 'features/explore/domain/repositories/explore_repository.dart';
@@ -23,6 +28,11 @@ import 'package:rasad/features/review/data/repositories/review_repositories_impl
 import 'package:rasad/features/review/domain/repositories/review_repositories.dart';
 import 'features/review/domain/use_cases/submit_review_usecase.dart';
 import 'features/review/presentation/bloc/review_bloc.dart';
+import 'features/analysis/data/datasources/analysis_remote_datasource.dart';
+import 'features/analysis/data/model/analysis_result_model.dart';
+import 'features/analysis/domain/repositories/analysis_repository.dart';
+import 'features/analysis/domain/usecases/analyze_usecase.dart';
+import 'features/analysis/presentation/bloc/analysis_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -32,8 +42,21 @@ Future<void> setupDependencies() async {
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => SignUpUseCase(sl()));
   sl.registerFactory(() => AuthBloc(signInUseCase: sl(), signUpUseCase: sl()));
-  sl.registerFactory(TripPlannerBloc.new);
   sl.registerFactory(RewardsBloc.new);
+
+  // Trip planner
+  sl.registerLazySingleton(() => TripPlannerLocalDataSource());
+  sl.registerLazySingleton<TripPlannerRepository>(
+    () => TripPlannerRepositoryImpl(sl()),
+  );
+  sl.registerLazySingleton(() => GetTripPlannerSuggestionsUseCase(sl()));
+  sl.registerLazySingleton(() => SendTripPlannerMessageUseCase(sl()));
+  sl.registerFactory(
+    () => TripPlannerBloc(
+      getSuggestionsUseCase: sl(),
+      sendMessageUseCase: sl(),
+    ),
+  );
 
   // ── Home ──────────────────────────────────────────────────────────────────
   sl.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl());
@@ -57,4 +80,12 @@ Future<void> setupDependencies() async {
   sl.registerLazySingleton<ReviewRepository>(() => ReviewRepositoryImpl());
   sl.registerLazySingleton(() => SubmitReviewUseCase(sl()));
   sl.registerFactory(() => ReviewBloc(submitReviewUseCase: sl()));
+
+  //analyze 
+  sl.registerLazySingleton(() => AnalysisRemoteDatasource());
+  sl.registerLazySingleton<AnalysisRepository>(
+    () => AnalysisRepositoryImpl(sl()),
+  );
+  sl.registerLazySingleton(() => AnalyzeUseCase(sl()));
+  sl.registerFactory(() => AnalysisBloc(sl()));
 }

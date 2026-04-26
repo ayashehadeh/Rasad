@@ -9,15 +9,15 @@ abstract class AppColors {
   static const Color primaryLight = Color(0xFFE53935);
 
   // Background
-  static const Color backgroundDark = Color(0xFF0D0D0D);
-  static const Color backgroundCard = Color(0xFF1A1A1A);
-  static const Color backgroundElevated = Color(0xFF242424);
-  static const Color backgroundSurface = Color(0xFF2C2C2C);
+  static const Color backgroundDark = Color(0xFFF3F3F3);
+  static const Color backgroundCard = Color(0xFFFFFFFF);
+  static const Color backgroundElevated = Color(0xFFF8F8F8);
+  static const Color backgroundSurface = Color(0xFFE8E8E8);
 
   // Text
-  static const Color textPrimary = Color(0xFFF5F0E8); // warm white
-  static const Color textSecondary = Color(0xFFB0A898); // warm grey
-  static const Color textHint = Color(0xFF6B6460);
+  static const Color textPrimary = Color(0xFF222222);
+  static const Color textSecondary = Color(0xFF6E6E6E);
+  static const Color textHint = Color(0xFF9A9A9A);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 
   // Accent — warm sand tones
@@ -30,11 +30,11 @@ abstract class AppColors {
   static const Color warning = Color(0xFFFFA726);
 
   // Border / Divider
-  static const Color border = Color(0xFF3A3530);
-  static const Color divider = Color(0xFF2A2520);
+  static const Color border = Color(0xFFE3E3E3);
+  static const Color divider = Color(0xFFECECEC);
 
   // Overlay
   static const Color overlayDark = Color(0xCC000000);
-  static const Color shimmer = Color(0xFF2E2E2E);
-  static const Color shimmerHighlight = Color(0xFF3D3D3D);
+  static const Color shimmer = Color(0xFFE2E2E2);
+  static const Color shimmerHighlight = Color(0xFFF1F1F1);
 }

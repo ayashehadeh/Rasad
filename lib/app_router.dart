@@ -53,6 +53,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.tripPlanner,
       builder: (context, state) => BlocProvider(
+        create: (_) => sl<HomeBloc>(),
+        child: const HomeScreen(),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.tripPlanner,
+      builder: (context, state) => BlocProvider(
         create: (_) => sl<TripPlannerBloc>(),
         child: const TripPlannerScreen(),
       ),
