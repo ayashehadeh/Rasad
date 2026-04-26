@@ -1,21 +1,42 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/entities/chat_message.dart';
+import '../../domain/use_cases/get_trip_planner_suggestions_usecase.dart';
+import '../../domain/use_cases/send_trip_planner_message_usecase.dart';
 import 'trip_planner_event.dart';
 import 'trip_planner_state.dart';
 
 class TripPlannerBloc extends Bloc<TripPlannerEvent, TripPlannerState> {
-  TripPlannerBloc() : super(const TripPlannerInitial()) {
+  final GetTripPlannerSuggestionsUseCase _getSuggestions;
+  final SendTripPlannerMessageUseCase _sendMessage;
+
+  TripPlannerBloc({
+    required GetTripPlannerSuggestionsUseCase getSuggestionsUseCase,
+    required SendTripPlannerMessageUseCase sendMessageUseCase,
+  }) : _getSuggestions = getSuggestionsUseCase,
+       _sendMessage = sendMessageUseCase,
+       super(const TripPlannerInitial()) {
+    on<TripPlannerStarted>(_onStarted);
     on<TripPlannerMessageSent>(_onMessageSent);
     on<TripPlannerSuggestionTapped>(_onSuggestionTapped);
     on<TripPlannerChatCleared>(_onChatCleared);
+    add(const TripPlannerStarted());
   }
 
-  static const List<String> _defaultSuggestions = [
-    'Build a 2-day Amman itinerary',
-    'Best places in Petra',
-    'Family trip in Aqaba',
-    'Budget trip around Jordan',
-  ];
+  Future<void> _onStarted(
+    TripPlannerStarted event,
+    Emitter<TripPlannerState> emit,
+  ) async {
+    final suggestionsResult = await _getSuggestions();
+
+    emit(
+      TripPlannerActive(
+        messages: const [],
+        isBotTyping: false,
+        quickSuggestions: suggestionsResult.getOrElse(() => const []),
+      ),
+    );
+  }
 
   Future<void> _onMessageSent(
     TripPlannerMessageSent event,
@@ -35,9 +56,15 @@ class TripPlannerBloc extends Bloc<TripPlannerEvent, TripPlannerState> {
       ),
     );
 
-    await Future<void>.delayed(const Duration(milliseconds: 700));
+    final responseResult = await _sendMessage(event.text);
+    final response = responseResult.getOrElse(
+      () => ChatMessage(
+        text: 'Sorry, I could not prepare a trip suggestion right now.',
+        sender: MessageSender.bot,
+        timestamp: DateTime.now(),
+      ),
+    );
 
-    final response = _buildBotResponse(event.text);
     emit(
       current.copyWith(
         messages: [...current.messages, userMessage, response],
@@ -58,49 +85,24 @@ class TripPlannerBloc extends Bloc<TripPlannerEvent, TripPlannerState> {
     Emitter<TripPlannerState> emit,
   ) {
     emit(
-      const TripPlannerActive(
+      _activeState.copyWith(
         messages: [],
         isBotTyping: false,
-        quickSuggestions: _defaultSuggestions,
       ),
     );
+    add(const TripPlannerStarted());
   }
 
   TripPlannerActive get _activeState {
-    final stateValue = state;
-    if (stateValue is TripPlannerActive) {
-      return stateValue;
+    final currentState = state;
+    if (currentState is TripPlannerActive) {
+      return currentState;
     }
+
     return const TripPlannerActive(
       messages: [],
       isBotTyping: false,
-      quickSuggestions: _defaultSuggestions,
-    );
-  }
-
-  ChatMessage _buildBotResponse(String prompt) {
-    final normalized = prompt.toLowerCase();
-    if (normalized.contains('itinerary') ||
-        normalized.contains('trip') ||
-        normalized.contains('plan')) {
-      return ChatMessage(
-        text: 'Suggested travel plan',
-        sender: MessageSender.bot,
-        timestamp: DateTime.now(),
-        responseType: BotResponseType.plan,
-        planItems: const [
-          'Day 1: Explore Downtown Amman and Rainbow Street.',
-          'Day 2: Visit Petra early and stay for sunset.',
-          'Day 3: Relax in Aqaba or Wadi Rum desert camp.',
-        ],
-      );
-    }
-
-    return ChatMessage(
-      text:
-          'Great idea. I can help tailor your Jordan trip by city, budget, and number of days.',
-      sender: MessageSender.bot,
-      timestamp: DateTime.now(),
+      quickSuggestions: [],
     );
   }
 }
