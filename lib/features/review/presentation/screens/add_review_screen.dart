@@ -42,10 +42,10 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
   }
 
   void _handleSubmit(BuildContext context, int selectedStars) {
-    if (selectedStars == 0) {
+    if (selectedStars == 0 || _reviewController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please select a star rating'),
+          content: Text('Please add rating and review text'),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -56,6 +56,8 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
         placeId: widget.placeId,
         userId: widget.userId,
         stars: selectedStars,
+        comment: _reviewController.text.trim(),
+        photos: _pickedPhotos,
       ),
     );
   }
@@ -541,6 +543,124 @@ class _ReviewBottomNav extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _SectionCard({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: AppTextStyles.labelLarge.copyWith(color: const Color(0xFF444444))),
+          const SizedBox(height: 10),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+class _TopProfileRow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const CircleAvatar(radius: 14, backgroundColor: Color(0xFFCECECE)),
+        const SizedBox(width: 8),
+        Text('Ahlan, Traveler', style: AppTextStyles.bodyMedium.copyWith(color: const Color(0xFF444444))),
+        const Spacer(),
+        Text('1,250 pts', style: AppTextStyles.labelMedium.copyWith(color: AppColors.primary)),
+      ],
+    );
+  }
+}
+
+class _PhotoButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+
+  const _PhotoButton({required this.icon, required this.label, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 74,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18, color: AppColors.textSecondary),
+            const SizedBox(height: 6),
+            Text(label, style: AppTextStyles.caption),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomNavPreview extends StatelessWidget {
+  const _BottomNavPreview();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 54,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Color(0xFFE8E8E8))),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _NavItem(icon: Icons.home_filled, label: 'HOME'),
+          _NavItem(icon: Icons.travel_explore, label: 'EXPLORE'),
+          _NavItem(icon: Icons.verified, label: 'REVIEW', active: true),
+          _NavItem(icon: Icons.card_giftcard, label: 'REWARDS'),
+          _NavItem(icon: Icons.person, label: 'PROFILE'),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool active;
+
+  const _NavItem({required this.icon, required this.label, this.active = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = active ? AppColors.primary : AppColors.textHint;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 16, color: color),
+        const SizedBox(height: 2),
+        Text(label, style: AppTextStyles.caption.copyWith(color: color, fontSize: 9)),
+      ],
     );
   }
 }

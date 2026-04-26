@@ -9,6 +9,8 @@ class ReviewRepositoryImpl implements ReviewRepository {
     required String placeId,
     required String userId,
     required int stars,
+    required String comment,
+    required List<String> photos,
   }) async {
     try {
       // TODO: replace with real API/Supabase call
@@ -19,6 +21,8 @@ class ReviewRepositoryImpl implements ReviewRepository {
           placeId: placeId,
           userId: userId,
           stars: stars,
+          comment: comment,
+          photos: photos,
           createdAt: DateTime.now(),
         ),
       );

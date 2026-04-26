@@ -122,6 +122,11 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
+    if (tab == HomeNavTab.rewards) {
+      context.go(AppRoutes.rewards);
+      return;
+    }
+
     if (tab == HomeNavTab.add) {
       context.push(
         AppRoutes.review,

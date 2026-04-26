@@ -28,15 +28,7 @@ abstract class AppRoutes {
 }
 
 final appRouter = GoRouter(
-  // ─── CHANGE LANDING PAGE HERE ───────────────────────────────────────────────
-  // Swap the value below to any AppRoutes constant to change the first screen.
-  //
-  //   AppRoutes.signIn  → opens Sign In  (normal production flow)
-  //   AppRoutes.home    → opens Home     (skip auth during development)
-  //   AppRoutes.review  → opens Review   (jump straight to review screen)
-  //
   initialLocation: AppRoutes.home,
-  // ────────────────────────────────────────────────────────────────────────────
   routes: [
     GoRoute(
       path: AppRoutes.signIn,
@@ -59,7 +51,7 @@ final appRouter = GoRouter(
       ),
     ),
     GoRoute(
-      path: AppRoutes.home,
+      path: AppRoutes.tripPlanner,
       builder: (context, state) => BlocProvider(
         create: (_) => sl<HomeBloc>(),
         child: const HomeScreen(),
@@ -77,6 +69,13 @@ final appRouter = GoRouter(
       builder: (context, state) => BlocProvider(
         create: (_) => sl<RewardsBloc>(),
         child: const RewardsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.home,
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<HomeBloc>(),
+        child: const HomeScreen(),
       ),
     ),
     GoRoute(
